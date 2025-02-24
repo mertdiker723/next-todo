@@ -1,0 +1,13 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    min-height: 100vh;
+    background-color: rgb(235, 235, 235);
+    
+    .form-elements {
+        background-color: rgb(221, 221, 221);
+        padding: 50px;
+        border-radius: 15px;
+    }
+}

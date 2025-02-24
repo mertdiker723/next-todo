@@ -1,0 +1,30 @@
+.button-container {
+  border-radius: 5px;
+  padding: 5px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &.btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+
+  &.btn-empty {
+    background-color: transparent;
+    color: #007bff;
+    border: 1px solid #007bff;
+
+    &:hover {
+      box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  &.btn-full-width {
+    width: 100%;
+  }
+}
