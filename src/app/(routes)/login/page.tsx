@@ -13,11 +13,13 @@ const Login = () => {
         <Input
           label="Email"
           type="email"
+          name="email"
           required
         />
         <Input
           label="Password"
           type="password"
+          name="password"
           customClass="mt-3"
           required
         />
