@@ -1,3 +1,4 @@
+import { HTMLInputTypeAttribute } from "react";
 
 type InputTypes = {
     label?: string;
@@ -7,7 +8,6 @@ type InputTypes = {
     required: boolean;
 }
 
-import { HTMLInputTypeAttribute } from "react";
 import "./Style.scss";
 
 const Input = ({ label, type = "text", name, customClass, required }: InputTypes) => {

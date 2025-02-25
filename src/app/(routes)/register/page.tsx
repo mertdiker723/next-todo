@@ -1,36 +1,44 @@
-import axios from "axios";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-// Input
+// Common
 import Input from "@/app/common/Input";
-import Button from "@/app/common/Button";
+import SubmitButton from "@/app/common/SubmitButton";
+
+// Lib
+import { apiRequest } from "@/lib/helpers";
 
 // Styles
 import "./Style.scss";
 
-const Register = () => {
+const Register = async ({ searchParams }: { searchParams?: { error?: string } }) => {
     const handleRegister = async (formData: FormData) => {
-        'use server';
-        await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/register`, {
+        "use server";
+        const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/register`, {
             name: formData.get("name"),
             email: formData.get("email"),
             password: formData.get("password"),
-        }).then((res) => {
-            console.log(res);
-        }).catch((error) => {
-            console.log(error);
-        });
+        }, "POST");
+
+        if (res.ok) {
+            redirect("/login");
+        } else {
+            const data = await res.json();
+            redirect(`/register?error=${encodeURIComponent(data.message)}`);
+        }
     };
+
+    const { error } = await Promise.resolve(searchParams) || {};
 
     return (
         <div className="register-container">
             <form className="form-elements" action={handleRegister}>
-                <Link href="/" className="link-route">
+                <Link href="/login" className="link-route">
                     Back
                 </Link>
                 <Input
                     label="Name"
-                    type="name"
+                    type="text"
                     name="name"
                     customClass="mt-3"
                     required
@@ -49,15 +57,13 @@ const Register = () => {
                     customClass="mt-3"
                     required
                 />
-                <Button
-                    title="Register"
-                    type="submit"
-                    widthFull
-                    customClass="btn-primary mt-4 mb-5"
-                />
+                <SubmitButton label="Register" />
+                {error && (
+                    <p className="text-red-700">{decodeURIComponent(error)}</p>
+                )}
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default Register
+export default Register;

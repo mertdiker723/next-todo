@@ -4,6 +4,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
 
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
   &.btn-primary {
     background-color: #007bff;
     color: white;

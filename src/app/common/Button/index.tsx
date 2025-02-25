@@ -5,16 +5,18 @@ import "./Style.scss"
 type ButtonTypes = {
     title: string;
     type: HTMLButtonElement['type'];
+    disabled?: boolean;
     customClass?: string;
     widthFull?: boolean;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const Button = ({ title, type, widthFull, customClass = '', onClick }: ButtonTypes) => {
+const Button = ({ title, type, widthFull, disabled = false, customClass = '', onClick }: ButtonTypes) => {
     return (
         <button
             className={`button-container ${widthFull ? 'btn-full-width' : ''} ${customClass}`}
             type={type}
+            disabled={disabled}
             onClick={onClick}
         >
             {title}
