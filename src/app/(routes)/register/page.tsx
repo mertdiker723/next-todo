@@ -12,7 +12,11 @@ import { createCookie } from "@/lib/auth";
 // Styles
 import "./Style.scss";
 
-const Register = async ({ searchParams }: { searchParams?: { error?: string } }) => {
+interface PageProps {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+const Register = async ({ searchParams }: PageProps) => {
     const handleRegister = async (formData: FormData) => {
         "use server";
         const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/register`, {
@@ -31,8 +35,8 @@ const Register = async ({ searchParams }: { searchParams?: { error?: string } })
             redirect(`/register?error=${encodeURIComponent(data.message)}`);
         }
     };
+    const { message } = await searchParams;
 
-    const { error } = await Promise.resolve(searchParams) || {};
 
     return (
         <div className="register-container">
@@ -62,8 +66,8 @@ const Register = async ({ searchParams }: { searchParams?: { error?: string } })
                     required
                 />
                 <SubmitButton label="Register" />
-                {error && (
-                    <p className="text-red-700">{decodeURIComponent(error)}</p>
+                {message && (
+                    <p className="text-red-700">{message}</p>
                 )}
             </form>
         </div>

@@ -12,7 +12,10 @@ import { createCookie } from "@/lib/auth";
 // Styles
 import "./Style.scss";
 
-const Login = async ({ searchParams }: { searchParams?: { message?: string } }) => {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+const Login = async ({ searchParams }: PageProps) => {
   const handleLogin = async (formData: FormData) => {
     "use server";
     const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/login`, {
@@ -29,8 +32,7 @@ const Login = async ({ searchParams }: { searchParams?: { message?: string } }) 
       redirect(`/login?message=${encodeURIComponent(data.message)}`);
     }
   };
-
-  const { message } = await Promise.resolve(searchParams) || {};
+  const { message } = await searchParams;
 
   return (
     <div className="login-container">
@@ -54,7 +56,7 @@ const Login = async ({ searchParams }: { searchParams?: { message?: string } }) 
           Register
         </Link>
         {message && (
-          <p className="text-red-700 mt-4">{decodeURIComponent(message)}</p>
+          <p className="text-red-700 mt-4">{message}</p>
         )}
       </form>
     </div>
