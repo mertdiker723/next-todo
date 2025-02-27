@@ -4,9 +4,11 @@ import bcrypt from "bcryptjs";
 // Db connection
 import dbConnection from "@/lib/dbConnection/mongodb";
 
+// Token
+import { cookieSettings, tokenCreater } from "@/lib/auth";
+
 // Schemas
 import User from "@/schemas/register";
-
 
 export const POST = async (req: NextRequest) => {
     await dbConnection();
@@ -21,7 +23,15 @@ export const POST = async (req: NextRequest) => {
         if (!isPasswordValid) {
             return NextResponse.json({ message: 'Password wrong!' }, { status: 401 });
         }
-        const response = NextResponse.json({ message: 'User successfully' }, { status: 200 });
+        const token = tokenCreater(findedUser._id, findedUser.email, findedUser.password);
+
+        const response = NextResponse.json({ message: 'User successfully', token }, { status: 201 });
+
+        response.cookies.set({
+            ...cookieSettings,
+            value: token,
+        });
+
         return response;
     } catch (error) {
         return NextResponse.json({ message: 'Error happened', error }, { status: 500 });

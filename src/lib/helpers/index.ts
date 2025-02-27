@@ -9,6 +9,7 @@ export const apiRequest = async (
         headers: {
             "Content-Type": "application/json",
         },
+        credentials: 'include',
     };
 
     if (data) {

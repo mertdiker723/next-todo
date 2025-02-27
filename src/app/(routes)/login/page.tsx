@@ -1,34 +1,35 @@
+import Link from "next/link";
 import { redirect } from "next/navigation"
-import Link from "next/link"
 
 // Common
-import Input from "@/app/common/Input"
-import SubmitButton from "@/app/common/SubmitButton"
+import Input from "@/app/common/Input";
+import SubmitButton from "@/app/common/SubmitButton";
 
 // Lib
-import { apiRequest } from "@/lib/helpers"
+import { apiRequest } from "@/lib/helpers";
+import { createCookie } from "@/lib/auth";
 
 // Styles
-import "./Style.scss"
+import "./Style.scss";
 
-const Login = async ({ searchParams }: { searchParams?: { error?: string } }) => {
-
+const Login = async ({ searchParams }: { searchParams?: { message?: string } }) => {
   const handleLogin = async (formData: FormData) => {
     "use server";
     const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/login`, {
       email: formData.get("email"),
       password: formData.get("password"),
     }, "POST");
-
-    if (res.ok) {
-      redirect("/");
+    const data = await res.json();
+    const { token } = data as { token: string };
+    if (res.ok && token) {
+      await createCookie(token)
+      redirect('/');
     } else {
-      const data = await res.json();
-      redirect(`/login?error=${encodeURIComponent(data.message)}`);
+      redirect(`/login?message=${encodeURIComponent(data.message)}`);
     }
   };
 
-  const { error } = await Promise.resolve(searchParams) || {};
+  const { message } = await Promise.resolve(searchParams) || {};
 
   return (
     <div className="login-container">
@@ -51,12 +52,12 @@ const Login = async ({ searchParams }: { searchParams?: { error?: string } }) =>
         <Link href="/register" className="link-route">
           Register
         </Link>
-        {error && (
-          <p className="text-red-700 mt-4">{decodeURIComponent(error)}</p>
+        {message && (
+          <p className="text-red-700 mt-4">{decodeURIComponent(message)}</p>
         )}
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
