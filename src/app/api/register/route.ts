@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const createdUser = await User.create({ name, email, password: hashedPassword });
 
-        const token = tokenCreater(createdUser._id, createdUser.email);
+        const token = await tokenCreater(createdUser._id, createdUser.email);
 
         return NextResponse.json({ message: "Successfully registered!", token }, { status: 201 });
     } catch (error) {

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtVerify } from 'jose';
 
-export const middleware = (req: NextRequest) => {
+export const middleware = async (req: NextRequest) => {
     const token = req.cookies.get('token')?.value;
     const loginPath = '/login';
     const registerPath = '/register';
@@ -10,9 +11,20 @@ export const middleware = (req: NextRequest) => {
     if (!token && req.nextUrl.pathname === homePath) {
         return NextResponse.redirect(new URL(loginPath, req.url));
     }
+    if (token) {
+        try {
+            const { payload } = await jwtVerify(token as string, new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET));
+            if (payload) {
+                if ([loginPath, registerPath].includes(req.nextUrl.pathname)) {
+                    return NextResponse.redirect(new URL(homePath, req.url));
+                }
+            }
+        } catch {
+            const response = NextResponse.redirect(new URL(loginPath, req.url));
+            response.cookies.delete("token");
+            return response;
+        }
 
-    if (token && (req.nextUrl.pathname === loginPath || req.nextUrl.pathname === registerPath)) {
-        return NextResponse.redirect(new URL(homePath, req.url));
     }
     return NextResponse.next();
 }

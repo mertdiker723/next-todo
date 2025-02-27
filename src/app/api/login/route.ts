@@ -23,7 +23,7 @@ export const POST = async (req: NextRequest) => {
         if (!isPasswordValid) {
             return NextResponse.json({ message: 'Password wrong!' }, { status: 401 });
         }
-        const token = tokenCreater(findedUser._id, findedUser.email);
+        const token = await tokenCreater(findedUser._id, findedUser.email);
 
         const response = NextResponse.json({ message: 'User successfully', token }, { status: 201 });
 

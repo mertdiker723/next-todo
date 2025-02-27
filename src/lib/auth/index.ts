@@ -1,17 +1,17 @@
-import jwt from "jsonwebtoken";
-
+import { SignJWT } from 'jose';
 import { cookies } from "next/headers";
 
-export const tokenCreater = (userId: string, email: string) => {
+export const tokenCreater = async (userId: string, email: string) => {
     const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string;
-    const token = jwt.sign(
-        { userId, email },
-        JWT_SECRET,
-        { expiresIn: '1h' }
-    );
-    return token;
-}
+    const secret = new TextEncoder().encode(JWT_SECRET);
 
+    const token = await new SignJWT({ userId, email })
+        .setProtectedHeader({ alg: 'HS256' })
+        .setExpirationTime('1h')
+        .sign(secret);
+
+    return token;
+};
 export const cookieSettings = {
     name: 'token',
     httpOnly: true,
