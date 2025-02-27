@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { jwtVerify } from 'jose';
+import { jwtVerifyToken } from './lib/auth';
 
 export const middleware = async (req: NextRequest) => {
     const token = req.cookies.get('token')?.value;
@@ -13,7 +13,7 @@ export const middleware = async (req: NextRequest) => {
     }
     if (token) {
         try {
-            const { payload } = await jwtVerify(token as string, new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET));
+            const { payload } = await jwtVerifyToken(token);
             if (payload) {
                 if ([loginPath, registerPath].includes(req.nextUrl.pathname)) {
                     return NextResponse.redirect(new URL(homePath, req.url));

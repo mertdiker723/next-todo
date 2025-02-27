@@ -1,4 +1,4 @@
-import { SignJWT } from 'jose';
+import { jwtVerify, SignJWT } from 'jose';
 import { cookies } from "next/headers";
 
 export const tokenCreater = async (userId: string, email: string) => {
@@ -12,6 +12,14 @@ export const tokenCreater = async (userId: string, email: string) => {
 
     return token;
 };
+
+export const jwtVerifyToken = async (token: string) => { 
+    const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string;
+    const secret = new TextEncoder().encode(JWT_SECRET);
+    const data = await jwtVerify(token, secret);
+    return data;
+}
+
 export const cookieSettings = {
     name: 'token',
     httpOnly: true,
