@@ -5,6 +5,9 @@ import { MongoServerError } from "mongodb";
 // Db connection
 import dbConnection from "@/lib/dbConnection/mongodb";
 
+// Lib
+import { tokenCreater } from "@/lib/auth";
+
 // Schema
 import User from "@/schemas/register";
 
@@ -14,9 +17,11 @@ export const POST = async (req: NextRequest) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        await User.create({ name, email, password: hashedPassword });
+        const createdUser = await User.create({ name, email, password: hashedPassword });
 
-        return NextResponse.json({ message: "Success" }, { status: 201 });
+        const token = tokenCreater(createdUser._id, createdUser.email);
+
+        return NextResponse.json({ message: "Successfully registered!", token }, { status: 201 });
     } catch (error) {
         if (error instanceof MongoServerError && error.code === 11000) {
             return NextResponse.json({ message: "Email already used!" }, { status: 400 });

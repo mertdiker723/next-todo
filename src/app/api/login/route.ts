@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 import dbConnection from "@/lib/dbConnection/mongodb";
 
 // Token
-import { cookieSettings, tokenCreater } from "@/lib/auth";
+import { tokenCreater } from "@/lib/auth";
 
 // Schemas
 import User from "@/schemas/register";
@@ -23,14 +23,9 @@ export const POST = async (req: NextRequest) => {
         if (!isPasswordValid) {
             return NextResponse.json({ message: 'Password wrong!' }, { status: 401 });
         }
-        const token = tokenCreater(findedUser._id, findedUser.email, findedUser.password);
+        const token = tokenCreater(findedUser._id, findedUser.email);
 
         const response = NextResponse.json({ message: 'User successfully', token }, { status: 201 });
-
-        response.cookies.set({
-            ...cookieSettings,
-            value: token,
-        });
 
         return response;
     } catch (error) {

@@ -21,8 +21,9 @@ const Login = async ({ searchParams }: { searchParams?: { message?: string } }) 
     }, "POST");
     const data = await res.json();
     const { token } = data as { token: string };
+
     if (res.ok && token) {
-      await createCookie(token)
+      await createCookie(token);
       redirect('/');
     } else {
       redirect(`/login?message=${encodeURIComponent(data.message)}`);

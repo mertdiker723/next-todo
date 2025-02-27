@@ -7,6 +7,7 @@ import SubmitButton from "@/app/common/SubmitButton";
 
 // Lib
 import { apiRequest } from "@/lib/helpers";
+import { createCookie } from "@/lib/auth";
 
 // Styles
 import "./Style.scss";
@@ -19,9 +20,12 @@ const Register = async ({ searchParams }: { searchParams?: { error?: string } })
             email: formData.get("email"),
             password: formData.get("password"),
         }, "POST");
+        const data = await res.json();
+        const { token } = data as { token: string };
 
-        if (res.ok) {
-            redirect("/login");
+        if (res.ok && token) {
+            await createCookie(token);
+            redirect("/");
         } else {
             const data = await res.json();
             redirect(`/register?error=${encodeURIComponent(data.message)}`);
