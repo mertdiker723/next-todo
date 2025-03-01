@@ -5,12 +5,12 @@ type InputTypes = {
     type: HTMLInputTypeAttribute;
     name: string;
     customClass?: string;
-    required: boolean;
+    required?: boolean;
 }
 
 import "./Style.scss";
 
-const Input = ({ label, type = "text", name, customClass, required }: InputTypes) => {
+const Input = ({ label, type = "text", name, customClass, required = false }: InputTypes) => {
     return (
         <div className={`input-container${customClass ? ` ${customClass}` : ""}`}>
             {label && <label className="input-label">{label}:</label>}

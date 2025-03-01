@@ -9,15 +9,16 @@ export const middleware = async (req: NextRequest) => {
 
     const PUBLIC_PATHS = [loginPath, registerPath, registerPathApi, loginPathApi];
 
-    if (!token && !PUBLIC_PATHS.includes(req.nextUrl.pathname)) {
+    if (!token && !PUBLIC_PATHS.includes(req.nextUrl.pathname) && !req.nextUrl.pathname.startsWith("/api/")) {
         return NextResponse.redirect(new URL(loginPath, req.url));
     }
 
     if (token) {
         try {
             const { payload } = await jwtVerifyToken(token);
+
             if (payload) {
-                if ([loginPath, registerPath].includes(req.nextUrl.pathname)) {
+                if (PUBLIC_PATHS.includes(req.nextUrl.pathname)) {
                     return NextResponse.redirect(new URL(homePath, req.url));
                 }
             }
@@ -27,24 +28,11 @@ export const middleware = async (req: NextRequest) => {
             return response;
         }
     }
-    if (!PUBLIC_PATHS.includes(req.nextUrl.pathname)) {
-        if (req.nextUrl.pathname.startsWith('/api/')) {
-            if (token) {
-                const requestHeaders = new Headers(req.headers);
-                requestHeaders.set('Authorization', `Bearer ${token}`);
-                return NextResponse.next({
-                    request: {
-                        headers: requestHeaders
-                    }
-                });
-            }
-        }
-    }
 
     return NextResponse.next();
 }
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
     ],
 }

@@ -1,8 +1,8 @@
-
 export const apiRequest = async (
     url: string,
     method: string = "POST",
-    data?: Record<string, unknown>
+    data?: Record<string, unknown>,
+    token: string = ""
 ) => {
     const options: RequestInit = {
         method,
@@ -11,7 +11,12 @@ export const apiRequest = async (
         },
         credentials: 'include',
     };
-
+    if (token) {
+        options.headers = {
+            ...options.headers,
+            "Authentication": token,
+        };
+    }
     if (data) {
         options.body = JSON.stringify(data);
     }

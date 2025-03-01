@@ -18,7 +18,7 @@ import './Style.scss'
 const Navbar = () => {
     const pathname = usePathname();
     const handleLogout = async () => {
-        const res = await apiRequest(apiPath.loginPathApi, 'POST');
+        const res = await apiRequest(apiPath.logoutPathApi, 'POST');
         if (res.ok) {
             redirect(routeUrls.loginPath)
         }

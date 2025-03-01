@@ -13,7 +13,7 @@ export const tokenCreater = async (userId: string, email: string) => {
     return token;
 };
 
-export const jwtVerifyToken = async (token: string) => { 
+export const jwtVerifyToken = async (token: string) => {
     const JWT_SECRET = process.env.NEXT_PUBLIC_JWT_SECRET as string;
     const secret = new TextEncoder().encode(JWT_SECRET);
     const data = await jwtVerify(token, secret);
@@ -23,7 +23,7 @@ export const jwtVerifyToken = async (token: string) => {
 export const cookieSettings = {
     name: 'token',
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production' ? true : false,
     path: '/',
     sameSite: 'lax' as const,
 }
