@@ -1,16 +1,18 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { jwtVerifyToken } from './lib/auth';
+import { routeUrls, apiPath } from './lib/routes';
 
 export const middleware = async (req: NextRequest) => {
     const token = req.cookies.get('token')?.value;
-    const loginPath = '/login';
-    const registerPath = '/register';
-    const homePath = '/';
+    const { loginPath, registerPath, homePath } = routeUrls;
+    const { loginPathApi, registerPathApi } = apiPath
 
-    if (!token && req.nextUrl.pathname === homePath) {
+    const PUBLIC_PATHS = [loginPath, registerPath, registerPathApi, loginPathApi];
+
+    if (!token && !PUBLIC_PATHS.includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL(loginPath, req.url));
     }
+
     if (token) {
         try {
             const { payload } = await jwtVerifyToken(token);
@@ -24,12 +26,25 @@ export const middleware = async (req: NextRequest) => {
             response.cookies.delete("token");
             return response;
         }
-
     }
+    if (!PUBLIC_PATHS.includes(req.nextUrl.pathname)) {
+        if (req.nextUrl.pathname.startsWith('/api/')) {
+            if (token) {
+                const requestHeaders = new Headers(req.headers);
+                requestHeaders.set('Authorization', `Bearer ${token}`);
+                return NextResponse.next({
+                    request: {
+                        headers: requestHeaders
+                    }
+                });
+            }
+        }
+    }
+
     return NextResponse.next();
 }
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
     ],
 }

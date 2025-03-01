@@ -19,11 +19,11 @@ interface PageProps {
 const Register = async ({ searchParams }: PageProps) => {
     const handleRegister = async (formData: FormData) => {
         "use server";
-        const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/register`, {
+        const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/register`, "POST", {
             name: formData.get("name"),
             email: formData.get("email"),
             password: formData.get("password"),
-        }, "POST");
+        });
         const data = await res.json();
         const { token } = data as { token: string };
 

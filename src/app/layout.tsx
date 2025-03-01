@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+// Components
+import Navbar from "./components/navbar";
+
 // Styles
 import "./globals.scss";
 
@@ -12,6 +15,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode; }>) => {
   return (
     <html lang="en">
       <body>
+        <Navbar />
         {children}
       </body>
     </html>

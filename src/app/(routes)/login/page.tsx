@@ -18,13 +18,14 @@ interface PageProps {
 const Login = async ({ searchParams }: PageProps) => {
   const handleLogin = async (formData: FormData) => {
     "use server";
-    const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/login`, {
+    const res = await apiRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/login`, "POST", {
       email: formData.get("email"),
       password: formData.get("password"),
-    }, "POST");
+    });
+
     const data = await res.json();
     const { token } = data as { token: string };
-
+    
     if (res.ok && token) {
       await createCookie(token);
       redirect('/');

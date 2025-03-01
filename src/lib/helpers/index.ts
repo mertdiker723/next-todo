@@ -1,8 +1,8 @@
 
 export const apiRequest = async (
     url: string,
-    data?: Record<string, unknown>,
-    method: string = "POST"
+    method: string = "POST",
+    data?: Record<string, unknown>
 ) => {
     const options: RequestInit = {
         method,
